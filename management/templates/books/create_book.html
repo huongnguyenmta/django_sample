@@ -1,0 +1,57 @@
+{% extends "dashboard/index.html" %}
+
+{% block extend_css %}
+    {% load static %}
+    <!-- <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet"> -->
+{% endblock %}
+
+{% block content_dashboard %}
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Create new book</h6>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{% url 'create_book' %}">
+                {% csrf_token %}
+                <div class="form-group row">
+                  <label for="book-name" class="col-sm-2 col-form-label">Book name</label>
+                  <div class="col-sm-10">
+                    <input class="form-control" id="book-name" placeholder="Input name" name="name">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="description" class="col-sm-2 col-form-label">Description</label>
+                  <div class="col-sm-10">
+                    <textarea class="form-control" placeholder="Input description" name="description"></textarea>
+                  </div>
+                </div>
+                <div class="form-group row">
+                    <label for="author" class="col-sm-2 col-form-label">Author</label>
+                    <div class="col-sm-5">
+                        <select id="author" class="form-control" name="author">
+                            <option selected>Choose author</option>
+                            {% for author in authors %}
+                                <option value={{author.id}}>{{author.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="published-date" class="col-sm-2 col-form-label">Published date</label>
+                  <div class="col-sm-5">
+                    <input type="date" name='published_date' class="form-control" id="published-date" placeholder="Choose date">
+                    <!-- <div id="date-picker-example" class="md-form md-outline input-with-post-icon datepicker" inline="true">
+                        <input placeholder="Select date" type="text" id="example" class="form-control">
+                        <i class="fas fa-calendar input-prefix"></i>
+                      </div> -->
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-10">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                  </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

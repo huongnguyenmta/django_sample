@@ -1,0 +1,70 @@
+{% extends "dashboard/index.html" %}
+{% block content_dashboard %}
+<form method="post" action="{% url 'create_multi_genere_book'%}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="inputFormRow">
+                <div class="input-group mb-3">
+                    <div class="col-sm-4">
+                        <select class="form-control" name="genere[]" required>
+                            <option selected value="">------</option>
+                            {% for genere in generes %}
+                                <option value={{genere.id}}>{{genere.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="number" min="1" name="book_number[]"
+                            class="form-control m-input" placeholder="Enter number"
+                            autocomplete="off" required>
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+            </div>
+
+            <div id="newRow"></div>
+            <button id="addRow" type="button" class="btn btn-primary">Add Row</button>
+            <button id="submit-" type="submit" class="btn btn-info">Submit</button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block extend_js %}
+<script type="text/javascript">
+    // add row
+    $("#addRow").click(function () {
+        var html = '';
+        html = `
+            <div id="inputFormRow">
+                <div class="input-group mb-3">
+                    <div class="col-sm-4">
+                        <select class="form-control" name="genere[]" required>
+                            <option value="" selected>------</option>
+                            {% for genere in generes %}
+                                <option value={{genere.id}}>{{genere.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="number" min="1" name="book_number[]"
+                            class="form-control m-input" placeholder="Enter number"
+                            autocomplete="off" required>
+                    </div>
+                    <div class="col-sm-2">                
+                        <button id="removeRow" type="button" class="btn btn-danger">Remove</button>
+                    </div>
+                </div>
+            </div>
+        `
+
+        $('#newRow').append(html);
+    });
+
+    // remove row
+    $(document).on('click', '#removeRow', function () {
+        $(this).closest('#inputFormRow').remove();
+    });
+</script>
+{% endblock %}
