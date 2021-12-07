@@ -93,6 +93,7 @@ class Book(models.Model):
     description = models.TextField(null=True)
     published_date = models.DateField(null=True)
     author = models.ForeignKey("Author", on_delete=models.PROTECT)
+    cover_img = models.ImageField(upload_to="images/", null=True)
     created_at = models.DateField(default=datetime.date.today())
 
     STATUSES = [(0, "Pending"), (1, "Published"), (2, "Canceled")]

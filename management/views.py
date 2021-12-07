@@ -42,6 +42,7 @@ def dashboard(request):
     return render(request, "dashboard/index.html")
 
 
+@login_required
 def list_books(request, method="GET"):
     # Lấy danh sách tất cả book
     books = Book.objects.all
@@ -49,6 +50,7 @@ def list_books(request, method="GET"):
     return render(request, "books/list_books.html", {"books": books})
 
 
+@login_required
 def create_book(request):
     if request.method == "GET":
         authors = Author.objects.all()
@@ -56,17 +58,21 @@ def create_book(request):
     elif request.method == "POST":
         try:
             data = request.POST
+            image = request.FILES
 
             name = data.get("name", "")
             description = data.get("description", "")
             author = int(data.get("author", None))
             published_date = data.get("published_date", None)
             created_at = datetime.date.today()
+            cover_image = image.get("cover_img", None)
+
             book = Book(
                 name=name,
                 description=description,
                 author_id=author,
                 published_date=published_date,
+                cover_img=cover_image,
                 created_at=created_at,
             )
             book.save()
@@ -81,7 +87,7 @@ def create_book(request):
 # Use form
 # def create_book(request):
 #     if request.method == "POST":
-#         form = CreateBookForm(request.POST)
+#         form = CreateBookForm(request.POST, request.FILES)
 #         if form.is_valid():
 #             book = Book()
 
@@ -90,6 +96,7 @@ def create_book(request):
 #             book.author = form.cleaned_data["author"]
 #             book.published_date = form.cleaned_data["published_date"]
 #             book.created_at = datetime.date.today()
+#             book.cover_img = form.cleaned_data["cover_img"]
 
 #             book.save()
 
@@ -105,14 +112,13 @@ def create_book(request):
 #     return render(request, "books/new_book.html", context=context)
 
 
+@login_required
 def edit_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
     if request.method == "POST":
         form = CreateBookForm(request.POST or None)
         if form.is_valid():
-            # book = Book()
-
             book.name = form.cleaned_data["name"]
             book.description = form.cleaned_data["description"]
             book.author = form.cleaned_data["author"]
@@ -131,6 +137,7 @@ def edit_book(request, pk):
     return render(request, "books/edit_book_f.html", context=context)
 
 
+@login_required
 def update_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
     authors = Author.objects.all()
@@ -138,21 +145,23 @@ def update_book(request, pk):
 
     if request.method == "POST":
         data = request.POST
+        img = request.FILES
 
         book.name = data.get("name", "")
         book.description = data.get("description", "")
         book.author_id = int(data.get("author", ""))
         book.published_date = data.get("published_date", "")
+        book.status = data.get("status", 0)
+        book.cover_img = img.get("cover_img", None)
 
         book.save()
         return redirect("list_books")
 
-    context = {"book": model_to_dict(book), "statuses": statuses
-        "authors": authors}
-        
+    context = {"book": model_to_dict(book), "statuses": statuses, "authors": authors}
     return render(request, "books/update_book.html", context=context)
 
 
+@login_required
 def delete_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
     book.delete()
@@ -160,11 +169,11 @@ def delete_book(request, pk):
     return redirect("list_books")
 
 
+@login_required
 def create_multi_genere_book(request, method="GET"):
     generes = Genere.objects.all()
 
     if request.method == "POST":
-        print(request.POST)
         data = request.POST
         list_generes = data.getlist("genere[]", [])
         list_number_books = data.getlist("book_number[]", [])
@@ -189,6 +198,13 @@ def create_multi_genere_book(request, method="GET"):
     )
 
 
+@login_required
+def show_book(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    return render(request, "books/show_book.html", context={"book": book})
+
+
+# Private methods
 def __new_genere_book(genere_id, number_book):
     genere_book = GenegeBook()
     genere_book.genere_id = genere_id

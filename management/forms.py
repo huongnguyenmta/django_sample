@@ -24,6 +24,10 @@ class CreateBookForm(forms.Form):
         label="Author: ",
         queryset=Author.objects.all(),
     )
+    cover_img = forms.ImageField(
+        widget=forms.FileInput(attrs={"type": "file", "class": "form-control-file"}),
+        label="Cover image: ",
+    )
     created_at = forms.DateField(
         widget=forms.DateInput(attrs={"type": "date", "class": "form-control"}),
         label="Created at: ",
@@ -32,4 +36,11 @@ class CreateBookForm(forms.Form):
 
     class Meta:
         model = Book
-        fields = ("name", "description", "published_date", "author", "created_at")
+        fields = (
+            "name",
+            "description",
+            "published_date",
+            "author",
+            "created_at",
+            "cover_img",
+        )
