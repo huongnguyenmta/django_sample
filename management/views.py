@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.forms.models import model_to_dict
 
+# from django.db.models import Q
+
 import datetime
 
 from .models import Book, Author, Genere, GenegeBook
@@ -44,8 +46,18 @@ def dashboard(request):
 
 @login_required
 def list_books(request, method="GET"):
+    query_params = request.GET
+    date_from = query_params.get("date_from", None)
+    date_to = query_params.get("date_to", None)
+
     # Lấy danh sách tất cả book
-    books = Book.objects.all
+    books = Book.objects.all()
+
+    if date_from is not None:
+        books = books.filter(created_at__gte=date_from)  # greater than equal
+
+    if date_to is not None:
+        books = books.filter(created_at__lte=date_to)
 
     return render(request, "books/list_books.html", {"books": books})
 
@@ -211,3 +223,7 @@ def __new_genere_book(genere_id, number_book):
     genere_book.number_of_book = number_book
 
     return genere_book
+
+
+def __convert_str_to_date(str):
+    return datetime.datetime.strptime(str, "%Y-%m-%d").date()
