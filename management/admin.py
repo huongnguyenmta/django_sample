@@ -8,3 +8,7 @@ class MyUserAdmin(admin.ModelAdmin):
     search_fields = ["email"]
     list_display = ("email", "role")
     fields = ("email", "password", "role")
+
+
+admin.site.register(Author)
+admin.site.register(Book)

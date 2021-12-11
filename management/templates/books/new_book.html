@@ -11,7 +11,7 @@
             <h6 class="m-0 font-weight-bold text-primary">Create new book</h6>
         </div>
         <div class="card-body">
-            <form method="POST" action="{% url 'create_book' %}">
+            <form method="POST" action="{% url 'create_book' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% for field in form %}
                     <div class="form-group row">
